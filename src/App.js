@@ -36,8 +36,8 @@ function App() {
     e.preventDefault();
     if (newMessageText && nickName) {
       socket.emit('messageFromClient', {
-        text: newMessageText,
         author: nickName,
+        text: newMessageText,
       });
     }
   };
