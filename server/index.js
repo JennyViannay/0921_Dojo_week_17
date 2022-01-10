@@ -1,6 +1,6 @@
 const express = require('express');
-const mysql = require('mysql');
 const dotenv = require('dotenv');
+const mysql = require('mysql');
 const app = express();
 const port = 3001;
 
@@ -31,31 +31,15 @@ const io = socketIO(server, {
   },
 });
 
-
 io.on('connect', (socket) => {
   console.log('user connected');
-  dbconnect.query('SELECT * FROM message', (err, results) => {
-    if (err) socket.emit('error', err)
-    else socket.emit('initialMessageList', results);
-  })
+  // [ONE] ::TODO connect to the DB, get all messages and send them to the client 
+  // under the event 'initialMessageList'
 
-  socket.on('messageFromClient', (messageTextAndAuthor) => {
-    const newMessage = [ messageTextAndAuthor.author, messageTextAndAuthor.text ];
-    console.log(newMessage)
-    dbconnect.query('INSERT INTO message (author, text) VALUES (?,?)', newMessage, (err, result) => {
-      if (err) io.emit('error', err)
-      else dbconnect.query('SELECT * FROM message WHERE id = ?', result.insertId, (error, message) => {
-        if (err) io.emit('error', error)
-        else {
-          console.log('new message from a client: ', message[0]);
-          io.emit('messageFromServer', message[0])
-        }
-      })
-    })
-  });
+  // [TWO] ::TODO listen to the 'messageFromClient' event and save the message to the DB
+  // then send the new message to the client under the event 'messageFromServer'
 
   socket.on('disconnect', () => {
     console.log('user disconnected');
   });
 });
-
